@@ -1,7 +1,6 @@
 """This is a module for performing high dimensional rotations."""
 
 import torch
-import numpy as np
 
 def rotation_matrix(theta: torch.Tensor, n_1 : torch.Tensor, n_2 : torch.Tensor) -> torch.Tensor:
     """
@@ -17,10 +16,10 @@ def rotation_matrix(theta: torch.Tensor, n_1 : torch.Tensor, n_2 : torch.Tensor)
     """
     dim = len(n_1)
     assert len(n_1) == len(n_2)
-    assert np.abs(n_1.dot(n_2) < 1e-4)
-    return (np.eye(dim) +
-        (np.outer(n_2, n_1) - np.outer(n_1, n_2)) * np.sin(theta) +
-        (np.outer(n_1, n_1) + np.outer(n_2, n_2)) * (np.cos(theta) - 1)
+    assert (n_1.dot(n_2).abs() < 1e-4)
+    return (torch.eye(dim) +
+        (torch.outer(n_2, n_1) - torch.outer(n_1, n_2)) * torch.sin(theta) +
+        (torch.outer(n_1, n_1) + torch.outer(n_2, n_2)) * (torch.cos(theta) - 1)
     )
 
 def rotate_vector(
@@ -41,12 +40,12 @@ def rotate_vector(
     """
     assert len(n_1) == len(n_2)
     assert len(n_1) == len(vec)
-    assert np.abs(n_1.dot(n_2) < 1e-4)
+    assert (n_1.dot(n_2).abs() < 1e-4)
     
     n1_dot_vec = n_1.dot(vec)
     n2_dot_vec = n_2.dot(vec)
     
     return (vec +
-        (n_2 * n1_dot_vec - n_1 * n2_dot_vec) * np.sin(theta) +
-        (n_1 * n1_dot_vec + n_2 * n2_dot_vec) * (np.cos(theta) - 1)
+        (n_2 * n1_dot_vec - n_1 * n2_dot_vec) * torch.sin(theta) +
+        (n_1 * n1_dot_vec + n_2 * n2_dot_vec) * (torch.cos(theta) - 1)
     )

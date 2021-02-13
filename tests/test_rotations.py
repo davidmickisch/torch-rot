@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 from scipy.spatial.transform import Rotation as R
 
 from torch_rot.rotations import rotation_matrix, rotate_vector
@@ -20,9 +21,10 @@ def test_rotation_matrix_in_3d():
     
     true_rot_matrix = R.from_rotvec(rot_vec).as_matrix()
     
-    rot_matrix = rotation_matrix(theta = rot_angle,
-                          n1 = n1,
-                          n2 = n2)
+    rot_matrix = rotation_matrix(theta = torch.Tensor([rot_angle]),
+                          n_1 = torch.Tensor(n1),
+                          n_2 = torch.Tensor(n2)
+                        ).numpy()
     
     assert is_small(true_rot_matrix - rot_matrix)
     
@@ -39,11 +41,11 @@ def test_rotate_random_vector_in_3d():
     
     true_rotated_random_vec = true_rot_matrix.dot(random_vec)
     rotated_random_vec = rotate_vector(
-        theta=rot_angle,
-        n1=n1,
-        n2=n2,
-        vec=random_vec
-    )
+        theta=torch.Tensor([rot_angle]),
+        n_1=torch.Tensor(n1),
+        n_2=torch.Tensor(n2),
+        vec=torch.Tensor(random_vec)
+    ).numpy()
     
     assert is_small(true_rotated_random_vec - rotated_random_vec)
     
@@ -56,10 +58,10 @@ def test_rotate_rotation_axis_in_30d():
     rot_angle = 2*np.pi*(np.random.random() - 0.5)
     
     rotated_axis = rotate_vector(
-        theta=rot_angle,
-        n1=n1,
-        n2=n2,
-        vec=axis
-    )
+        theta=torch.Tensor([rot_angle]),
+        n_1=torch.Tensor(n1),
+        n_2=torch.Tensor(n2),
+        vec=torch.Tensor(axis)
+    ).numpy()
     
     assert is_small(rotated_axis - axis)
